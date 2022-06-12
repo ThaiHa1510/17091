@@ -1,0 +1,61 @@
+<div class="card-main" *ngIf="user && user.id;else notLogin">
+  <div class="container" *ngIf="user.role == 'member'">
+    <div class="row">
+      <div class="col-sm-2">
+        <div class="title-card">
+          <h3><i class="fa fa-credit-card"></i> {{'Credit Card'|translate}}</h3>
+          {{'Choose your top-up amount'|translate}}:
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <ul class="list-card">
+          <li *ngFor="let topup of listTopup" [ngClass]="{'box-free':topup.price == 0}" class="box-topup" [ngStyle]="{'display': (topup.price == 0 && user.wasClaimFreeMin) ? 'none' : 'block' }">
+            <ng-container *ngIf="topup.price > 0">
+              <!-- <a  href="{{ccbill+paymentSetting.accountNumber+'&clientSubacc='+paymentSetting.subAccount+'&formName='+topup.formName+'&formPrice='+topup.formPrice+'&user_id='+user.id+'&topupId='+topup._id}}" class="box-choose-card" > -->
+              <a href="{{topup.orderUrl}}" class="box-choose-card">
+
+                <span>{{config?.currency}}{{getPrice(topup.price)}}</span> ({{topup.token}} Min(s))
+              </a>
+            </ng-container>
+            <ng-container *ngIf="topup.price == 0 && !user.wasClaimFreeMin">
+              <a (click)="clamFree(topup._id)" class="box-choose-card ">
+                <span translate>Free</span><br> {{topup.token}} Minutes
+              </a>
+            </ng-container>
+          </li>
+        </ul>
+      </div>
+      <div class="col-sm-4 text-right">
+        <p>{{'Top-ups are one-off and non-recurring. payment Powered by CCBill. All major cards accepted'|translate}}.</p>
+        <img src="assets/images/card.png">
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #notLogin>
+  <div class="card-main">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-2">
+          <div class="title-card">
+            <h3 translate><i class="fa fa-credit-card"></i> Credit Card</h3>
+            {{'Choose your top-up amount'|translate}}:
+          </div>
+        </div>
+        <div class="col-sm-6 text-center">
+
+
+          <a [routerLink]="['/inscrivez-vous']" class="btn btn-pink btn-big-size">
+            {{'Sign up now for Free!'|translate}}
+          </a>
+
+
+        </div>
+        <div class="col-sm-4 text-right">
+          <p>{{'Top-ups are one-off and non-recurring. payment Powered by CCBill. All major cards accepted'|translate}}.</p>
+          <img src="assets/images/card.png">
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

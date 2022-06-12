@@ -1,0 +1,46 @@
+<div class="footer" *ngIf="pageConfig">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-5 logo">
+        <img src="{{pageConfig.getLogo()}}">
+        <div class="info-footer">
+          <p translate>Anonymous, Safe & Secure</p>
+          <p translate> Great Quality Audio</p>
+          <p translate>No Phone Charges, Phone and Internet Calling, Worldwide Accessible</p>
+          <a href="/inscrivez-vous" class="btn signup-footer_btn" style="border: 2px solid #fff;" translate>Sign up now for FREE !</a>
+        </div>
+      </div>
+      <div class="col-sm-3 list-menu">
+        <h3 translate>STATIC PAGE</h3>
+        <br>
+        <ul class="none-list d-flex flex-column list_static-page">
+          <li *ngFor="let pageItem of listStaticPage flex-fill"> <a href="/page/{{pageItem.slug}}">{{pageItem.title|translate}}</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-4">
+        <!--        <h3>E-NEWSLETTER</h3>-->
+        <!--        <div class="form-newletter">
+          <input type="text" placeholder="Enter your email" name="">
+          <button class="btn btn-danger">REGISTER</button>
+        </div>-->
+        <div class="social-media">
+          <li><a target="_blank" href="{{pageConfig.fb}}"><i class="fa fa-facebook"></i></a></li>
+          <li><a target="_blank" href="{{pageConfig.twitter}}"><i class="fa fa-twitter"></i></a></li>
+          <li><a target="_blank" href="{{pageConfig.instagram}}"><i class="fa fa-instagram"></i></a></li>
+        </div>
+        <div class="image-box">
+          <img src="assets/images/user.jpg" alt="" width="200" height="150">
+        </div>
+      </div>
+    </div>
+    <div class="txt-footer">
+      {{'Billing Support'|translate}} | “{{'Please visit Epoch, our authorized sales agent'|translate}}.” | {{'18 U.S.C.2257 Record-Keeping Requirements Compliance Statement'|translate}}<br>
+      {{'You must be 18 years or older to view this website or use any of the above listed entertainment services'|translate}} - {{'All website models and operators are 18 years or older'|translate}}
+    </div>
+  </div>
+</div>
+<div class="copy-right" *ngIf="pageConfig">
+  <div class="container">
+    {{pageConfig.footer}}
+  </div>
+</div>

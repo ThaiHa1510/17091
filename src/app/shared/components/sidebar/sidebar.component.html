@@ -1,0 +1,62 @@
+<mat-nav-list fxShow="true" >
+    <button mat-icon-button (click)="toggleSideBar()" class="float-right">
+        <mat-icon>close</mat-icon>
+    </button>
+    <h2 matSubheader>Pages</h2>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard">
+      <mat-icon aria-hidden="false" aria-label="home">home</mat-icon>Dashboard
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/reviews">
+      <mat-icon> list_alt</mat-icon>Reviews
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/manager-model">
+      <mat-icon> person_pin</mat-icon>Models
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/manager-user">
+      <mat-icon>person</mat-icon> User
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/packages">
+        <mat-icon> attach_money</mat-icon>Packages
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/options">
+        <mat-icon> perm_data_setting</mat-icon>Options
+    </a>
+     <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/i18n">
+        <mat-icon> g_translate</mat-icon>Translate setting
+    </a>
+    <mat-expansion-panel [class.mat-elevation-z0]="true" dense>
+      <mat-expansion-panel-header>
+        <mat-icon> settings</mat-icon>  Settings
+      </mat-expansion-panel-header>
+      <mat-nav-list dense>
+        <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/settings">
+          List settings
+        </a>
+        <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/settings/create">
+          Add setting
+        </a>
+      </mat-nav-list>
+    </mat-expansion-panel>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/page-config">
+        <mat-icon> settings</mat-icon>Page Config
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/seo">
+        <mat-icon class="white-icon"> title</mat-icon> Seo Config
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/manager-withdraw">
+        <mat-icon> credit_card</mat-icon>With Draw
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/static-page">
+        <mat-icon> how_to_vote</mat-icon>Static Page
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/order-manager">
+        <mat-icon>add_shopping_cart</mat-icon>Order
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/ads">
+        <mat-icon>image</mat-icon>Banner
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/payout">
+        <mat-icon>payment</mat-icon>Pay out
+    </a>
+    <mat-divider></mat-divider>
+</mat-nav-list>

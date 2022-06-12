@@ -1,0 +1,108 @@
+.scroll-user,
+.list-chat {
+  overflow-y: scroll;
+}
+
+.load_more_message {
+  background: #9bc3ec;
+  color: #000;
+  border-radius: 10px;
+  height: 20px;
+  width: 80px;
+  font-size: 10px;
+  text-align: center;
+  margin: auto;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  line-height: 10px;
+}
+.item-user-call {
+  padding-right: 40px;
+}
+.item-call {
+  position: absolute;
+  right: 0px;
+  padding-right: 10px;
+}
+.noti-message {
+  position: absolute;
+  top: -5px;
+  /* padding: 10px; */
+  background: red;
+  border-radius: 50%;
+  min-width: 20px;
+  height: 20px;
+  text-align: center;
+  font-size: 12px;
+}
+.btn-call {
+  border-radius: 50%;
+}
+.show-mv {
+  display: none;
+}
+
+.hide-mv {
+  display: inherit;
+}
+.mt-20 {
+  margin-top: 20px !important;
+}
+.mt-15 {
+  margin-top: 15px !important;
+}
+
+.date-text {
+  font-size: 12px;
+  display: inline-block;
+  color: #8d8f98;
+}
+
+.unread-message {
+  position: unset;
+  top: -5px;
+  background: #e91c56;
+  border-radius: 50%;
+  min-width: 20px;
+  height: 20px;
+  text-align: center;
+  font-size: 12px;
+  color: white;
+}
+
+.unread-text {
+  font-weight: bold;
+}
+
+.chat-user {
+  display: inline-block;
+}
+
+.toogle-chat {
+  top: 200px !important;
+}
+
+@media screen and (max-width: 600px) {
+  .show-mv {
+    display: inherit;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .model-chat {
+    padding: 0 !important;
+  }
+  .container-w0 {
+    padding: 0 !important;
+  }
+  .show-mv {
+    display: inherit;
+  }
+  .hide-mv {
+    display: none;
+  }
+  .mv-max-height {
+    height: 100vh;
+  }
+}

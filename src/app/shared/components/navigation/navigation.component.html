@@ -1,0 +1,119 @@
+<div class="header">
+  <div class="logo">
+    <a [routerLink]='["/accueil"]'><img src="{{pageConfig.getLogo()}}"></a>
+  </div>
+  <a class="toggle-menu" (click)="acitveToggleMenu=!acitveToggleMenu" [ngClass]="acitveToggleMenu?'active':'' "><i class="fa fa-bars"></i></a>
+
+  <ul style="
+    position: absolute;
+    top: 21px;
+    right: 61px;">
+    <li class="pull-left">
+      <div class="d-inline-block dropdown" ngbDropdown>
+        <button style="line-height: 10px;    text-transform: capitalize;" aria-haspopup="true" class="btn btn-outline-secondary flag-dropdown-mobile  flag-dropdown " id="dropdownLangdropdown-toggle flag-dropdown dropdown-uage"
+          ngbDropdownToggle type="button">
+          <img style="width:20px" src="assets/images/flag/{{selectedLanguage.key}}.svg">{{selectedLanguage.name}}
+
+        </button>
+        <div ngbDropdownMenu aria-labelledby="dropdownLanguage">
+          <button (click)="selectLanguage(lang)" ngbDropdownItem *ngFor="let lang of languages"><img style="width:25px" src="assets/images/flag/{{lang.key}}.svg">{{lang.name}}</button>
+        </div>
+      </div>
+    </li>
+    <li *ngIf="user && user.access_token" class="pull-left">
+      <a [routerLink]="['/message']" class="notification-message-mobile"><i class="fa fa-envelope"></i>
+        <span class="count-number" *ngIf="totalUnreadMessage > 0 && totalUnreadMessage <10">{{totalUnreadMessage}}</span>
+        <span class="count-number" *ngIf="totalUnreadMessage > 0 && totalUnreadMessage >9">9+</span>
+      </a>
+    </li>
+  </ul>
+  <div class="search-top">
+    <input type="text" name="" (keyup)="searchTerm$.next($event.target.value)" placeholder="{{'Search'|translate}} ">
+    <button><i class="fa fa-search"></i></button>
+    <ul class="list-group search-result_list" *ngIf="results">
+      <li class="list-group-item" *ngFor="let result of results ">
+        <a href="/model-detail/{{ result.id }}" target="_blank">
+          {{ result.firstName }} {{result.lastName }}
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="right-header" [ngClass]="acitveToggleMenu?'active':'' ">
+    <div *ngIf="user && user.access_token ; else notLogin" class="menu-profile">
+      <li ngbDropdown>
+        <!-- <a class="btn btn-outline-primary" id="dropdownMenuButton" ngbDropdownToggle>
+          {{'Hi'|translate}}! {{user.lastName}}
+          <i class="fa fa-angle-down"></i>
+        </a> -->
+        <button *ngIf="user && user.role == 'member'" class="btn btn-sm btn-outline-user" id="dropdownBasic2" (click)="onNavigateTo('recharger-mon-compte')">
+          {{timer}} {{'Minutes'|translate}}
+        </button>
+        <button class="btn btn-sm btn-outline-user" id="dropdownBasic1" ngbDropdownToggle>
+          {{'Hi'|translate}} {{user.firstName}}
+        </button>
+        <div ngbDropdownMenu aria-labelledby="dropdownMenuButton">
+          <button ngbDropdownItem [routerLink]="['/profile']" translate>Profile</button>
+          <button ngbDropdownItem [routerLink]="['/talk-history']" translate>Talk History</button>
+          <button ngbDropdownItem [routerLink]="['/message']" translate> Message</button>
+          <!-- <button ngbDropdownItem [routerLink]="['/auth']" translate> Change Password</button> -->
+
+          <button *ngIf="user && user.role == 'model' " ngbDropdownItem [routerLink]="['/auth/send-withdraw']" translate> Send WithDraw</button>
+          <button *ngIf="user && user.role == 'model' " ngbDropdownItem [routerLink]="['/auth/bank-account']" translate> Bank Account</button>
+          <button *ngIf="user && user.role == 'model' " ngbDropdownItem [routerLink]="['/my-gallery']" translate> Gallery</button>
+          <button ngbDropdownItem (click)="logout()" translate>Log out</button>
+        </div>
+      </li>
+      <li  [ngClass]="acitveToggleMenu?'d-none':'show' " >
+        <a [routerLink]="['/message']" class="nofication notification-message"><i class="fa fa-envelope"></i>
+          <span class="count-number" *ngIf="totalUnreadMessage > 0 && totalUnreadMessage <10">{{totalUnreadMessage}}</span>
+          <span class="count-number" *ngIf="totalUnreadMessage > 0 && totalUnreadMessage >9">9+</span>
+        </a>
+      </li>
+      <li [ngClass]="acitveToggleMenu?'d-none':'show' " >
+        <div class="d-inline-block dropdown" ngbDropdown>
+          <button style="line-height: 10px" aria-haspopup="true" class="btn btn-outline-secondary  flag-dropdown " id="dropdownLangdropdown-toggle flag-dropdown dropdown-uage" ngbDropdownToggle type="button">
+            <img style="width:20px" src="assets/images/flag/{{selectedLanguage.key}}.svg">{{selectedLanguage.name}}
+
+          </button>
+          <div ngbDropdownMenu aria-labelledby="dropdownLanguage">
+            <button (click)="selectLanguage(lang)" ngbDropdownItem *ngFor="let lang of languages"><img style="width:25px" src="assets/images/flag/{{lang.key}}.svg">{{lang.name}}</button>
+          </div>
+        </div>
+      </li>
+      <!--      <li>
+        <a [routerLink]="['/notification']" class="nofication"><i class="fa fa-bell"></i></a>
+      </li>-->
+    </div>
+    <ng-template #notLogin>
+      <div class="menu-login">
+        <a [routerLink]="['/login']" translate>Login</a> |
+        <a [routerLink]="['/inscrivez-vous']" translate>Registration</a>
+        <!-- <a [routerLink]="['/register-model']" translate>Signup Model</a> -->
+        <ul style="display: inline-block">
+          <li [ngClass]="acitveToggleMenu?'d-none':'show' " >
+            <div class="d-inline-block dropdown" ngbDropdown>
+              <button style="line-height: 10px" aria-haspopup="true" class="btn btn-outline-secondary  flag-dropdown " id="dropdownLangdropdown-toggle flag-dropdown dropdown-uage" ngbDropdownToggle type="button">
+                <img style="width:20px" src="assets/images/flag/{{selectedLanguage.key}}.svg">
+                {{selectedLanguage.name}}
+              </button>
+              <div ngbDropdownMenu aria-labelledby="dropdownLanguage">
+                <button (click)="selectLanguage(lang)" ngbDropdownItem *ngFor="let lang of languages"><img style="width:25px" src="assets/images/flag/{{lang.key}}.svg">{{lang.name}}</button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </ng-template>
+
+
+    <ul class="nav-main">
+      <li><a [routerLink]='["/accueil"]' translate>Home</a></li>
+      <li><a [routerLink]='["/profils"]' translate>{{'Models'|translate}}</a></li>
+      <li *ngIf="user && user.role == 'member' ">
+        <a [routerLink]='["/recharger-mon-compte"]'>{{'Get Minutes'|translate}}</a>
+      </li>
+      <li><a [routerLink]='["/page/how-to-call"]'>{{'How To Call'|translate}}</a></li>
+      <!-- <li *ngIf="user && user.role == 'member' "><a class="btn btn-outline-user">{{timer}} {{'Minutes'|translate}}</a></li> -->
+    </ul>
+  </div>
+</div>

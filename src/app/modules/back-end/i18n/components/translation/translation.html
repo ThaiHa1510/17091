@@ -1,0 +1,52 @@
+<h2 class="title-list text-center">Language manager</h2>
+<br>
+
+<div fxLayoutAlign="space-between center" fxLayoutGap="20px">
+  <mat-form-field class="filter-input">
+    <input matInput [(ngModel)]="search" placeholder="Filter text">
+    <button (click)="applyFilter()" class="btn-warning btn">Seach</button>
+  </mat-form-field>
+  <div fxLayoutGap="20px">
+    <div fxFlex="100" clas="m-r-3">
+      <div class="acction-toolbar">
+        <button class="pull-right btn btn-warning" mat-raised-button (click)="pull()">Pull</button>
+      </div>
+    </div>
+    <div fxFlex="100">
+      <div class="acction-toolbar">
+        <button class="pull-right btn btn-primary" mat-raised-button (click)="addNew()">New</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="20px">
+  <div fxFlex="100">
+
+    <mat-table [dataSource]="list" matSort>
+      <!-- Checkbox Column -->
+
+      <!-- First Name Column -->
+      <ng-container matColumnDef="text">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Text </mat-header-cell>
+        <mat-cell *matCellDef="let item"> {{item.text}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="translation">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Translation </mat-header-cell>
+        <mat-cell *matCellDef="let item;let i = index"><input class="form-control" type="text"
+            [(ngModel)]="item.translation" name="translation{{i}}"> </mat-cell>
+      </ng-container>
+      <!-- Action Column-->
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+        <mat-cell *matCellDef="let item;let i = index" fxLayout="row wrap">
+          <button (click)="update(item)" class="btn btn-primary">Update</button>
+
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[10, 20,50,100,500]"></mat-paginator>
+
+  </div>
+</div>

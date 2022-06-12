@@ -1,0 +1,108 @@
+<app-navigation></app-navigation>
+<div class="model-home" *ngIf="model">
+  <div class="container">
+    <div class="hea-top-main">
+      <div class="thumbnail">
+        <a href="#" translate >HOME</a> >
+        <a href="{{baseDetailUrl}}/profils" translate >MODEL</a> >
+        <a href="{{baseDetailUrl}}/model-detail/{{model.id}}">{{model.getFullName() | uppercase}}</a>
+      </div>
+      <div class="pull-right">
+        <a mat-button href="{{baseDetailUrl}}/model-detail/{{model.id}}" class="btn btn-success">	<mat-icon>arrow_back</mat-icon> {{'Back'|translate}}</a>
+      </div>
+    </div>
+    <div class="detail-page">
+      <div class="row">
+        <div class="col-sm-5 col-md-4">
+          <div class="item-model item-model-detail">
+            <div class="pic-model">
+              <a href="#"><img src="{{model.avatarUrl}}"></a>
+            </div>
+            <div class="txt-model">
+              <div class="title-model">
+                <h3><a href="#">{{model.firstName + " " + model.lastName}}</a></h3>
+                <div class="age-item">, {{model.age}} <span translate>Age</span> <span class="status online"></span></div>
+              </div>
+              <div class="star-v">
+                <ng-template #t let-fill="fill">
+                  <span class="star" [class.full]="fill === 100">
+                    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                  </span>
+                </ng-template>
+                <ngb-rating [starTemplate]="t" [(rate)]="rating" [max]="5" [readonly]="true">
+
+                </ngb-rating>
+              </div>
+              <div class="Language-model"><span translate>LANGUAGE</span>: {{model.languages}}</div>
+              <div class="city-model"><span>City</span>: {{model.location?model.location['city']:''}}</div>
+              <div class="audio-detail">
+                <audio src="{{model.audioUrl}}" controls></audio>
+              </div>
+              <div class="button-right-detail">
+                <button (click)="onClickSendMessage()" class="btn btn-danger-ouline btn-block" >
+                  <i class="fa fa-envelope"></i> {{'Send Message'|translate}}
+                </button>
+                <button (click)="call()" class="btn btn-success btn-block" ><i class="fa fa-volume-up"></i>
+                  {{'Call me now!'|translate}}</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="box-pink">
+            <div class="head-box-pink" translate>
+              <i class="fa fa-question-circle"></i> Why choose us?
+            </div>
+            <div class="body-box-pink">
+              <ul class="list-1">
+                <li><a href="#" translate>Anonymous, Safe & Secure</a></li>
+                <li><a href="#" translate>Speak in Multiple Languages</a></li>
+                <li><a href="#" translate>Great Audio Quality</a></li>
+                <li><a href="#" translate>No Phone Charges</a></li>
+                <li><a href="#" translate>Phone and Internet Calling</a></li>
+                <li><a href="#" translate>Worldwide Accessible</a></li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-sm-7 col-md-8">
+          <div class="box-detail">
+            <div class="title-box-detail" translate>
+              What other callers said about me
+            </div>
+            <div class="body-box-detail">
+              <table class="table-comment">
+                <tr *ngFor="let reviewItem of listReviews;">
+                  <td>{{ timeHelper.timeDifference(now,reviewItem.createdAt)}}</td>
+                  <td>
+                    <strong>{{reviewItem.reviewer.firstName + " " + reviewItem.reviewer.lastName}}</strong>
+                  </td>
+                  <td>
+                    <div class="list-star">
+                      <ng-template #t let-fill="fill">
+                        <span class="star" [class.full]="fill === 100">
+                          <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                        </span>
+                      </ng-template>
+                      <ngb-rating [starTemplate]="t" [(rate)]="reviewItem.rating" [max]="5" [readonly]="true">
+
+                      </ngb-rating>
+                    </div>
+                  </td>
+                  <td>{{reviewItem.content}}</td>
+
+                </tr>
+              </table>
+              <button mat-raised-button color="accent" *ngIf="canLoadMore" (click)="loadMoreClick()" translate>{{'Load More'|translate}}</button>
+              <xtalk-review *ngIf="canReview" [userId]="id" [model]="model"></xtalk-review>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
+

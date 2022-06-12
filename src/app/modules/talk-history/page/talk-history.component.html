@@ -1,0 +1,108 @@
+<app-navigation></app-navigation>
+<div class="model-home">
+  <div class="container">
+    <div class="hea-top-main">
+      <h3 translate>History</h3>
+    </div>
+    <ul class="list-history">
+      <li *ngFor="let itemTalk of listTalk |slice: (page-1) * pageSize : (page-1) * pageSize + pageSize" class="item-history">
+
+        <div class="pic-history bg-cover" *ngIf="user.role == 'member';else modelPicHistory">
+          <a href="{{baseUrl}}/model-detail/{{itemTalk.to._id}}"><img src="{{ itemTalk.getAvatar()}}" style="opacity: 1;"></a>
+        </div>
+        <ng-template #modelPicHistory>
+          <div class="pic-history bg-cover">
+            <img src="{{ itemTalk.getAvatar()}}" style="opacity: 1;">
+          </div>
+        </ng-template>
+        <div class="txt-history" *ngIf="user.role == 'member';else modelTxtHistory">
+          <div class="row" *ngIf="itemTalk.to">
+            <div class="col-sm-6">
+              <div class="txt-model">
+                <div class="title-model">
+                  <h3><a href="{{baseUrl}}/model-detail/{{itemTalk.to._id}}">{{itemTalk.to.lastName }}</a></h3>
+                  <div class="age-item">Age - {{itemTalk.to.age}} </div>
+                </div>
+                <div class="star-v">
+                  <ng-template #t let-fill="fill">
+                    <span class="star" [class.full]="fill === 100">
+                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                    </span>
+                  </ng-template>
+                  <ngb-rating [starTemplate]="t" [(rate)]="itemTalk.rating" [max]="5" [readonly]="true">
+                  </ngb-rating>
+                  <span class="volume-model"><i class="fa fa-volume-up"></i></span>
+                </div>
+                <div class="Language-model"><span translate>LANGUAGE</span>: {{itemTalk.to.languages}}</div>
+                <div class="date"><span translate>Date</span>: {{itemTalk.createdAt | date:"medium"}}</div>
+
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="spent-credit">
+                <div>{{itemTalk.getCallDuration() }} <span translate>Minutes Spent</span></div>
+                <!--<div class="bg-pink">{{itemTalk.getToken(price)}} <span translate>Credit</span></div>-->
+              </div>
+            </div>
+          </div>
+          <div class="audio-history" *ngIf="itemTalk.recordingUrl && user.role !== 'member'">
+            <audio src="{{itemTalk.recordingUrl }}" controls></audio>
+          </div>
+        </div>
+        <ng-template #modelTxtHistory>
+          <div class="txt-history">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="txt-model" *ngIf="itemTalk.userId">
+                  <div class="title-model">
+                    <h3><a>{{itemTalk.userId.lastName }}</a></h3>
+                    <div class="age-item"><span translate>Age</span> - {{itemTalk.userId.age}} </div>
+                  </div>
+                  <div class="star-v">
+                    <ng-template #t let-fill="fill">
+                      <span class="star" [class.full]="fill === 100">
+                        <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                      </span>
+                    </ng-template>
+                    <ngb-rating [starTemplate]="t" [max]="5" [(rate)]="itemTalk.rating" [readonly]="true">
+
+                    </ngb-rating>
+                    <span class="volume-model"><i class="fa fa-volume-up"></i></span>
+                  </div>
+                  <div class="Language-model"><span translate>LANGUAGE</span>: {{itemTalk.userId.languages}}</div>
+                  <div class="date"><span translate>Date</span>: {{itemTalk.createdAt | date:"medium"}}</div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="spent-credit">
+                  <div>{{itemTalk.getCallDuration() }} <span translate>Minutes Spent</span></div>
+                  <!--<div class="bg-pink">{{itemTalk.getToken(price)}} Credit</div>-->
+                </div>
+              </div>
+            </div>
+            <div class="audio-history" *ngIf="user.role !== 'member'">
+              <audio src="{{itemTalk.recordingUrl }}" controls></audio>
+            </div>
+          </div>
+        </ng-template>
+      </li>
+    </ul>
+    <nav aria-label="Page navigation">
+      <ngb-pagination [collectionSize]="listTalk.length" [(page)]="page" [pageSize]="pageSize" [boundaryLinks]="true">
+      </ngb-pagination>
+    </nav>
+    <div *ngIf="user.role == 'member'" class="renew">
+      <li>{{'Total minutes'|translate}} <span>{{floor( spentMins + minutes)}}</span></li>
+      <li>{{'Spent'|translate}}<span>{{floor(spentMins)}} minutes </span></li>
+      <li>{{'Available Balance'|translate}}<span>{{floor(blance)}}</span></li>
+      <button (click)="onNavigateTo('recharger-mon-compte')" class="btn btn-danger btn-block" translate>RENEW</button>
+    </div>
+    <div *ngIf="user.role == 'model' " class="renew">
+      <!--      <li>Total Earned <span>{{getSpent()}} {{currency}}</span></li>
+            <li>Admin Commission <span>{{getAdminCommission(commission)}} {{currency}} ({{commission}}%) </span></li>-->
+      <li><span translate>Available Balance</span><span>{{getBlance()}} {{currency}}</span></li>
+    </div>
+
+  </div>
+</div>
+<app-footer></app-footer>

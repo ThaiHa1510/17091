@@ -1,0 +1,123 @@
+<div class="item-model" *ngIf="size == 'big'">
+  <div class="pic-model">
+    <a class="hide-fading" [routerLink]="['/model-detail', model.id]" *ngIf="model && model.avatarUrl != null ; else notAvatar;">
+      <img src="{{imageHelper.getAvatarLinkV2(model,model.avatarPath,size)}}"></a>
+    <ng-template #notAvatar>
+      <a class="hide-fading" href="#"><img src="{{imageHelper.getAvatarLinkV2(model,model.avatarPath,size)}}"></a>
+    </ng-template>
+  </div>
+  <div class="txt-model">
+    <div class="title-model">
+      <h3><a [routerLink]="['/model-detail', model.id]">{{ model.firstName +" " + model.lastName}}</a></h3>
+      <div class="age-item"><span>{{'Age'|translate}}</span> - {{model.age}} <span class="status " [ngClass]="{'online':model.status,'offline':!model.status}"></span></div>
+    </div>
+    <ng-template #t let-fill="fill">
+      <span class="star" [class.full]="fill === 100">
+        <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+      </span>
+    </ng-template>
+    <div class="star-v">
+      <ngb-rating [starTemplate]="t" [(rate)]="model.rating" [max]="5" [readonly]="true">
+
+      </ngb-rating>
+      <span class="volume-model cp_hand" [routerLink]="['/model-detail', model.id]"><i class="fa fa-volume-up"></i></span>
+    </div>
+    <div class="Language-model"><span translate>LANGUAGE</span>: {{model.languages}}</div>
+    <div class="cp_hand" *ngIf="model.isCalling == true || model.doNotDisturb  ;else notCalling" [routerLink]="['/model-detail', model.id]">
+      <div class="btn-status off-online">
+        <i class="fa fa-comments"></i> <span translate>Busy</span>
+      </div>
+    </div>
+    <ng-template #notCalling>
+      <div *ngIf="model.status == true ;else notActive" class="btn-status online cp_hand" [routerLink]="['/model-detail', model.id]">
+        <i class="fa fa-comments"></i>
+        <span translate>ONLINE</span>
+      </div>
+      <ng-template #notActive>
+        <div class="btn-status off-online cp_hand" [routerLink]="['/model-detail', model.id]">
+          <i class="fa fa-comments"></i> <span translate>Offline</span>
+        </div>
+      </ng-template>
+    </ng-template>
+  </div>
+</div>
+<div class="item-model" *ngIf="size == 'medium'">
+  <div class="pic-model_{{size}}">
+    <!-- <a [routerLink]="['/model-detail', model.id]" ><img src="assets/images/img.jpg"></a> -->
+    <a class="hide-fading" [routerLink]="['/model-detail', model.id]" *ngIf="model && model.hasAvatar ; else notAvatar;">
+      <img class="" src="{{imageHelper.getAvatarLink(model.avatarPath,size)}}" (error)="setDefaultPic()"></a>
+    <ng-template #notAvatar>
+      <a class="hide-fading" href="#"><img src="{{imageHelper.getAvatarLinkV2(model,model.avatarPath,size)}}" (error)="setDefaultPic()"></a>
+    </ng-template>
+  </div>
+  <div class="txt-model">
+    <div class="title-model" style="padding-right: 0px;">
+      <h3><a [routerLink]="['/model-detail', model.id]">{{ model.firstName +" " + model.lastName}}</a></h3>
+      <div class="age-item" style="position: inherit;"> {{'Age'|translate}} - {{model.age}} <span class="status " [ngClass]="{'online':model.status,'offline':!model.status}"></span></div>
+    </div>
+    <ng-template #t let-fill="fill">
+      <span class="star" [class.full]="fill === 100">
+        <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+      </span>
+    </ng-template>
+    <div class="star-v">
+      <ngb-rating [starTemplate]="t" [(rate)]="model.rating" [max]="5" [readonly]="true">
+
+      </ngb-rating>
+      <span class="volume-model"><i class="fa fa-volume-up"></i></span>
+    </div>
+    <div class="Language-model">LANGUAGE: {{model.languages}}</div>
+    <div class="cp_hand" *ngIf="model.isCalling == true || model.doNotDisturb  ;else notCalling" [routerLink]="['/model-detail', model.id]">
+      <div class="btn-status off-online"><i class="fa fa-comments"></i> <span translate>Busy</span></div>
+    </div>
+    <ng-template #notCalling>
+      <div *ngIf="model.status == true ;else notActive" class="btn-status online cp_hand" [routerLink]="['/model-detail', model.id]"><i class="fa fa-comments"></i>
+        <span translate>ONLINE</span>
+      </div>
+      <ng-template #notActive>
+        <div class="btn-status off-online cp_hand" [routerLink]="['/model-detail', model.id]">
+          <i class="fa fa-comments"></i> <span translate>Offline</span>
+        </div>
+      </ng-template>
+    </ng-template>
+  </div>
+</div>
+<div class="item-model" *ngIf="size == 'thumbnail'">
+  <div class="pic-model_{{size}}">
+    <!-- <a [routerLink]="['/model-detail', model.id]" ><img src="assets/images/img.jpg"></a> -->
+    <a class="hide-fading" [routerLink]="['/model-detail', model.id]" *ngIf="model && model.avatarUrl != null ; else notAvatar;">
+      <img class="" src="{{apiUrl}}/{{getAvatar(model.avatarPath)}}" (error)="setDefaultPic()"></a>
+    <ng-template #notAvatar>
+      <a class="hide-fading" href="#"><img src="{{imageHelper.getAvatarLink('/assets/images/img.jpg',size)}}" (error)="setDefaultPic()"></a>
+    </ng-template>
+  </div>
+  <div class="txt-model">
+    <div class="title-model" style="padding-right: 0px;">
+      <h3><a [routerLink]="['/model-detail', model.id]">{{ model.firstName +" " + model.lastName}}</a></h3>
+      <div class="age-item" style="position: inherit;"><span translate>Age</span> - {{model.age}} <span class="status " [ngClass]="{'online':model.status,'offline':!model.status}"></span></div>
+    </div>
+    <ng-template #t let-fill="fill">
+      <span class="star" [class.full]="fill === 100">
+        <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+      </span>
+    </ng-template>
+    <div class="star-v">
+      <ngb-rating [starTemplate]="t" [(rate)]="model.rating" [max]="5" [readonly]="true">
+
+      </ngb-rating>
+      <span class="volume-model cp_hand" [routerLink]="['/model-detail', model.id]"><i class="fa fa-volume-up"></i></span>
+    </div>
+    <div class="Language-model"><span translate>LANGUAGE</span>: {{model.languages}}</div>
+    <div class="cp_hand" *ngIf="model.isCalling == true || model.doNotDisturb  ;else notCalling" [routerLink]="['/model-detail', model.id]">
+      <div class="btn-status off-online"><i class="fa fa-comments"></i> <span translate>Busy</span></div>
+    </div>
+    <ng-template #notCalling>
+      <div *ngIf="model.status == true ;else notActive" class="btn-status online cp_hand" [routerLink]="['/model-detail', model.id]"><i class="fa fa-comments"></i>
+        <span translate>ONLINE</span>
+      </div>
+      <ng-template #notActive>
+        <div class="btn-status off-online cp_hand" [routerLink]="['/model-detail', model.id]"><i class="fa fa-comments"></i> <span translate>Offline</span></div>
+      </ng-template>
+    </ng-template>
+  </div>
+</div>

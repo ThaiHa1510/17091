@@ -1,0 +1,8 @@
+<h1 mat-dialog-title translate>Confirm </h1>
+<div mat-dialog-content>
+  <p>{{data.title|translate}}?</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()" translate>No Thanks</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial translate>Ok</button>
+</div>  

@@ -1,0 +1,46 @@
+<h3 class="title-list text-center">Update Settings</h3>
+<br>
+<mat-divider></mat-divider>
+<br>
+<mat-card class="example-card">
+  <mat-card-header>
+
+    <mat-card-title *ngIf="item">Update Setting - {{item.name}}</mat-card-title>
+
+  </mat-card-header>
+  <mat-divider></mat-divider>
+  <mat-card-content>
+    <div  *ngIf="item" class="box-body">
+      <form  [formGroup]="createFrom"   (ngSubmit)="onSubmit()">
+         <div class="form-group " *ngIf="item.type =='text'">
+          <input type="text"  formControlName="value"
+                 [ngClass]="{ 'is-invalid': submitted && f.value.errors }"
+                 class="form-control" placeholder="Value">
+
+                 <div *ngIf="submitted && f.value.errors" class="invalid-feedback">
+                 <div class="label label-danger" *ngIf="f.value.errors.required">This filed required</div>
+
+          </div>
+        </div>
+        <div class="form-group" *ngIf="item.type =='editor'">
+          <ck-editor formControlName="value" skin="moono-lisa"></ck-editor>
+
+          <div *ngIf="submitted && f.value.errors" class="invalid-feedback">
+            <div class="label label-danger" *ngIf="f.value.errors.required">This filed required</div>
+
+          </div>
+        </div>
+
+
+
+        <div class="form-group">
+          <button [disabled]="loading" type="submit" class="btn btn-success">Save</button>
+          <img *ngIf="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+        </div>
+        <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+
+      </form>
+    </div>
+  </mat-card-content>
+</mat-card>
+<style>.hidden{display:none}</style>

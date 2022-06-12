@@ -1,0 +1,21 @@
+<div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="20px" style="margin:auto">
+    <div fxFlex="100"  >
+        <form [formGroup]="audioFormGroup">
+            <ng-template matStepLabel>Upload File</ng-template>
+            <div class="example-full-width">
+              <mat-label>Audio file</mat-label>
+              <input  formControlName="audioCtrl" type="file" name="image" (change)="fileProgress($event)"
+              accept="audio/*">
+              <mat-error *ngIf="audioFormGroup.hasError('required')">
+                File is required
+              </mat-error> 
+              <mat-error *ngIf="!checkFileSize()">
+                {{'Maximum file size 10Mb'|translate}}
+              </mat-error>
+            </div>
+            <div>
+              <button mat-raised-button color="accent"  style="margin-right: 10%;" (click)="onSubmit()" translate>Submit</button>
+              <button mat-raised-button color="accent" (click)="onCloseClick()" translate>Close</button>
+            </div>
+          </form>
+  </div>

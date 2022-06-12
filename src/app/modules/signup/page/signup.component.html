@@ -1,0 +1,63 @@
+<app-navigation></app-navigation>
+<div class="auth-page">
+  <div class="signup-box">
+    <div class="sign-box">
+      <h3 translate>Register</h3>
+      <hr>
+      <div class="row">
+        <div class="col-12">
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmitForm()">
+            <div class="form-group">
+              <label for="firstName" translate>Name<span class="text-error">*</span></label>
+              <input mat-input type="text" placeholder="{{'Enter Name'| translate}}" formControlName="firstName" class="form-control" [ngClass]="{'is-invalid': firstName.invalid && (firstName.dirty || firstName.touched)}" required />
+              <div class="invalid-feedback" *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)">
+                {{ VM.REQUIRED |translate}}
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email" translate>Email<span class="text-error">*</span></label>
+              <input mat-input type="email" formControlName="email" class="form-control" [ngClass]="{'is-invalid': email.invalid && (email.dirty || email.touched)}" />
+              <div class="invalid-feedback" *ngIf="email.invalid && (email.dirty || email.touched)">
+                <div *ngIf="email.errors.required">{{ VM.REQUIRED | translate}}</div>
+                <div *ngIf="email.errors.email">{{ VM.VALID_EMAIL  | translate}}</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="password" translate>Password<span class="text-error">*</span></label>
+              <input mat-input type="password" formControlName="password" class="form-control" [ngClass]="{'is-invalid': password.invalid && (password.dirty || password.touched)}" />
+              <div class="invalid-feedback" *ngIf="password.invalid && (password.dirty || password.touched)">
+                <div *ngIf="password.errors.required">{{ VM.REQUIRED |translate}}</div>
+                <div *ngIf="password.errors.minlength">{{ VM.PASSWORD_MIN_LENGTH |translate}}</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword" translate>Confirm Password<span class="text-error">*</span></label>
+              <input type="password" formControlName="confirmPassword" class="form-control" [ngClass]="{'is-invalid': confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)}" />
+              <div class="invalid-feedback" *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)">
+                <div *ngIf="confirmPassword.errors.required">{{ VM.REQUIRED | translate }}</div>
+                <div *ngIf="confirmPassword.errors.mustMatch">{{ VM.PASSWORD_MUST_MATCH | translate}}</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <mat-checkbox formControlName="terms" class="mt-5">
+              </mat-checkbox>
+              <a class="ml-2" target="_blank" href="https://www.xchat-beurettes.com/page/condition-gnrales-de-vente" translate>Accept to Term and Condition</a>
+            </div>
+
+            <div class="form-group">
+              <button type="submit" translate [disabled]="loading" class="btn btn-primary">
+                <span *ngIf="loading " class="spinner-border spinner-border-sm mr-1"></span>
+                Register
+              </button>
+              <a routerLink="/login" class="btn btn-link" translate>Cancel</a>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

@@ -1,0 +1,37 @@
+.mat-warring{
+  background-color: #e91c56;
+  color: #fff;
+}
+.btn-pink{
+  color: white;
+  background: #e91c56;
+  font-size: 26px;
+}
+.box-topup{
+  -webkit-box-align: center!important;
+  -ms-flex-align: center!important;
+  align-items: center!important;
+  -webkit-box-pack: center!important;
+  -ms-flex-pack: center!important;
+  justify-content: center!important;
+  display: -webkit-box!important;
+  display: -ms-flexbox!important;
+  /* display: flex!important; */
+  background: #e91c56;
+  border-radius: 5px;
+  width: calc(33.33% - 10px);
+      margin: 5px;
+    padding: 0px;
+}
+.box-free a{
+      line-height: 35px;
+}
+.box-free a:hover{
+  text-decoration: underline;
+}
+.box-free span{
+  font-size: 30px;
+}
+.box-choose-card{
+	cursor:pointer;
+}

@@ -1,0 +1,119 @@
+<app-navigation class="hide-mv"></app-navigation>
+<div class="model-chat">
+    <div class="container container-w0">
+        <div class="chat-main" #chatMain [ngClass]="toogleChatClicked?'active':'' ">
+            <span class="toogle-chat" #toogleChat (click)="toogleChatClicked=!toogleChatClicked"><i class="fa fa-comments"></i>
+                <span class="noti-message" *ngIf="totalUnreadMessage > 0 && totalUnreadMessage < 10">{{totalUnreadMessage}}</span>
+                <span class="noti-message" *ngIf="totalUnreadMessage > 0 && totalUnreadMessage > 9">9+</span>
+            </span>
+            <div class="left-main mv-max-height">
+                <div class="search-chat">
+                    <button><i class="fa fa-search"></i></button>
+                    <input type="text" name="" placeholder="{{'Search'|translate}}" [(ngModel)]="queryString">
+                </div>
+                <div class="scroll-user">
+                    <mat-list itemSize="50" minBufferPx="200" maxBufferPx="400" class="example-viewport list-user" *ngIf="listMessages">
+                        <mat-list-item *ngFor='let roomItem of listRoom | searchableRoom:queryString : searchableRoom' class="user-box" [ngClass]="{'user-box-active': roomItem.id == roomId}">
+                            <div class="item-user" *ngIf="user.role=='model' && roomItem.userId;else memberlist" (click)="beginRoom(roomItem.id, roomItem.userId)">
+                                <div class="pic-user">
+                                    <img matListAvatar src="{{imageHelper.getAvatarLinkV2(roomItem.userId,roomItem.userId.avatarPath,'thumbnail')}}">
+                                </div>
+                                <a style="display: inline-block;" (click)="beginRoom(roomItem.id,roomItem.userId)">{{roomItem.userId.firstName }} {{roomItem.userId.lastName }}</a>
+                                <span class="pull-right date-text">{{ getTextDate(roomItem.lastMessage?.createdAt) }}</span><br>
+                                <a *ngIf="listMessages.has(roomItem.id) && listMessages.get(roomItem.id)[listMessages.get(roomItem.id).length -1];">
+                                    <span
+                                        [ngClass]="{'unread-text': listMessages.get(roomItem.id)[listMessages.get(roomItem.id).length -1]['readFlag'] === false && listMessages.get(roomItem.id)[listMessages.get(roomItem.id).length -1]['from']['id'] !== user.id}">
+                                        {{ getShortText(listMessages.get(roomItem.id)[listMessages.get(roomItem.id).length -1].text)}}
+                                    </span>
+                                </a>
+                            </div>
+                            <ng-template #memberlist>
+                                <div class="item-user" *ngIf="roomItem.modelId" (click)="beginRoom(roomItem.id, roomItem.modelId)">
+                                    <div class="pic-user">
+                                        <img matListAvatar src="{{ imageHelper.getAvatarLinkV2(roomItem.modelId,roomItem.modelId.avatarPath,'thumbnail')}}">
+                                    </div>
+                                    <a style="display: inline-block;" (click)="beginRoom(roomItem.id,roomItem.modelId)">{{roomItem.modelId.firstName }} {{roomItem.modelId.lastName }}</a>
+                                    <span class="pull-right date-text">{{ getTextDate(roomItem.lastMessage?.createdAt) }}</span>
+                                    <br>
+                                    <a *ngIf="listMessages.has(roomItem.id) && listMessages.get(roomItem.id)[listMessages.get(roomItem.id).length -1];">
+                                        <span
+                                            [ngClass]="{'unread-text': listMessages.get(roomItem.id)[listMessages.get(roomItem.id).length -1]['readFlag'] === false && listMessages.get(roomItem.id)[listMessages.get(roomItem.id).length -1]['from']['id'] !== user.id}">
+                                            {{ getShortText(listMessages.get(roomItem.id)[listMessages.get(roomItem.id).length -1]['text']) }}
+                                        </span>
+                                    </a>
+                                    <!-- <span class="unread-message pull-right">5</span> -->
+                                </div>
+                            </ng-template>
+                        </mat-list-item>
+
+                    </mat-list>
+                </div>
+            </div>
+            <div class="right-main mv-max-height">
+                <div class="top-chat">
+                    <ng-container *ngIf="to.role =='model'">
+                        <div class="item-user item-user-call ">
+                            <a [routerLink]="['/model-detail', to.id]">
+                                <div class="pic-user mt-20" *ngIf="to && to.avatarUrl"><img class="mat-list-avatar" src="{{imageHelper.getAvatarLinkV2(to,to.avatarPath,'thumbnail')}}"></div>
+                                <h3>{{to.firstName}} {{to.lastName}}</h3><br>
+                                <div *ngIf="to.status == true ;else chatOffline" class="status-top" translate>
+                                    Online <span class="status online"></span>
+                                </div>
+                            </a>
+                        </div>
+                        <div class='item-call mt-15'>
+                            <button *ngIf="!to.isCalling && !to.doNotDisturb" (click)="call()" class="btn btn-call btn-success">
+                                <i class="fa fa-phone"></i>
+                            </button>
+                            <button class="btn btn-sm pull-right ml-5 show-mv" style="color: #e91c56;" [routerLink]="['/home']">
+                                <i class="fa fa-close"></i>
+                            </button>
+                        </div>
+
+                    </ng-container>
+                    <ng-container *ngIf="to.role !='model'">
+
+                        <div class="item-user item-user-call ">
+                            <div class="pic-user mt-20" *ngIf="to && to.avatarUrl"><img class="mat-list-avatar" src="{{imageHelper.getAvatarLinkV2(to,to.avatarPath,'thumbnail')}}"></div>
+                            <h3>{{to.firstName}} {{to.lastName}}</h3><br>
+                            <div *ngIf="to.status == true ;else chatOffline" class="status-top" translate>
+                                Online <span class="status online"></span>
+                            </div>
+                        </div>
+                        <div class='item-call mt-15'>
+                            <button class="btn btn-sm pull-right ml-5 show-mv" style="color: #e91c56;" [routerLink]="['/home']">
+                                <i class="fa fa-close"></i>
+                            </button>
+                        </div>
+                    </ng-container>
+                    <ng-template #chatOffline>
+                        <div class="status-top" *ngIf="to.status == false" translate>
+                            Offline<span class="status offline"></span>
+                        </div>
+                    </ng-template>
+                </div>
+                <div class="list-chat" #listChat [scrollTop]="listChat.scrollHeight">
+                    <a class="load_more_message" (click)='loadMoreMessage()' *ngIf="canLoadMessage">
+                        {{'Load more'|translate }}!
+                    </a>
+                    <ng-container *ngFor="let msgItem of messages">
+                        <div *ngIf="msgItem && msgItem.text && msgItem.from"  [ngClass]="getChatClass(msgItem)">
+                            <app-messages-chat [message]="msgItem" [to]="to" [user]="user"></app-messages-chat>
+                        </div>
+                    </ng-container>
+                </div>
+                <div class="form-message" style="background-color: #fff;">
+                    <input #imgupload type="file" id="imgupload" style="display:none" accept="image/x-png,image/gif,image/jpeg" (change)="attachImg($event)" />
+                    <textarea placeholder="{{'Enter Message'|translate}}" [(ngModel)]="message" (keyup)="$event.keyCode==13 && sendMessage()"></textarea>
+                    <div class="right-message">
+                        <button class="btn btn-call pull-right btn-send ng-star-inserted" (click)="sendMessage()">
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<app-footer class="hide-mv"></app-footer>
