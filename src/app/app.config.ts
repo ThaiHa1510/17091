@@ -6,5 +6,8 @@ export const MESSAGE = {
         PASSWORD_MUST_MATCH: 'Password and Confirm password must match'
     },
     CONFIRM_REGISTERATION: 'To confirm your registration, please check the link we sent you on your email:',
-    TERM_CONDITION: 'Terms and Condition must be accepted'
+    TERM_CONDITION: 'Terms and Condition must be accepted',
+    CALL:{
+        NOT_REGIESTERED:"Something error when make call"
+    }
 }

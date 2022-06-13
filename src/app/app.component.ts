@@ -1,14 +1,12 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
 import { ModalService } from '@/_modal';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertService } from '@/_servies/alert.service';
 import { PageconfigService } from '@/_servies/pageconfig.service';
 import { AuthenticationService } from '@/_servies/authentication.service';
-import { AcceptCallService } from '@/_servies/acceptCall.service';
 import { SeoConfigService } from '@/_servies/seoconfig.service';
 import { LoadingServiceService } from '@/_servies/loading-service.service';
 import { CallService } from '@/_servies/call.service';
-import { ChatService } from '@/_servies/chat.service';
 import { Config, User, Model, Ads, Ticket } from './_models';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { RatingCallComponent } from '@/shared/widgets/rating-call/rating-call.component';
@@ -22,19 +20,19 @@ import { BehaviorSubject } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { SystemService } from '@/_servies/system.service';
-import { Observable } from 'rxjs';
-declare const Twilio;
+import { Observable,Subscription } from 'rxjs';
 declare let ga: Function;
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy{
   title = 'app';
   loading: boolean = false;
   public captchaIsLoaded = false;
   public captchaSuccess = false;
+  private subscriptions :Subscription= new Subscription();
   public captchaIsExpired = false;
   public captchaResponse?: string;
   canSubmit: boolean = true;
@@ -65,10 +63,8 @@ export class AppComponent {
   static isBrowser = new BehaviorSubject<boolean>(null);
   constructor(private modalService: ModalService, public callService: CallService,
     private translate: TranslateService,
-    private systemService: SystemService,
-    private acceptService: AcceptCallService, 
+    private systemService: SystemService, 
     private authentication: AuthenticationService,
-    private chatService: ChatService, 
     private titleService: Title,
     public dialog: MatDialog, private seoService: SeoConfigService,
     private alertService: AlertService, private router: Router,
@@ -90,20 +86,22 @@ export class AppComponent {
       phone: ['', Validators.required],
       description: ['', [Validators.required]],
     });
-    this.seoService.currentSeo.subscribe(data => {
+    this.subscriptions.add(this.seoService.currentSeo.subscribe(data => {
       if (data) {
         this.setTitle(data.title);
         this.setDescription(data.description);
         this.setKeyWord(data.keyword);
       }
-    });
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        if (this.user) {
-          this.authentication.reload();
+    }));
+    this.subscriptions.add(
+      this.router.events.subscribe(event => {
+        if (event instanceof NavigationEnd) {
+          if (this.user) {
+            this.authentication.reload();
+          }
         }
-      }
-    });
+      })
+    );
   }
 
   handelMessageRouter() {
@@ -139,48 +137,56 @@ export class AppComponent {
     if (localStorage.getItem('twilioToken')) {
       this.callService.twilioTokenSubject.next(localStorage.getItem('twilioToken'));
     }
-    this.callService.remainingTime$.subscribe(data => {
-      this.timer = data;
-    }, err => {
-      this.timer = 0;
-    });
+    this.subscriptions.add(
+      this.callService.remainingTime$.subscribe(data => {
+        this.timer = data;
+      }, err => {
+        this.timer = 0;
+      })
+    );
     this.pageConfigService.getAds();
 
-    this.callService.otherPerson$.subscribe(data => {
-      this.currentModel = data;
-      if (data != null && data.id) {
-        this.modalService.open('call-modal');
-      } else {
-        this.hiddenAnswer = false;
-      }
+    this.subscriptions.add(
+      this.callService.otherPerson$.subscribe(data => {
+        this.currentModel = data;
+        if (data != null && data.id) {
+          this.modalService.open('call-modal');
+        } else {
+          this.hiddenAnswer = false;
+        }
 
-    });
-    this.authentication.currentUser.subscribe(data => {
-      this.user = data;
-    });
+      })
+    );
 
-    this.callService.resetCallDuration$.subscribe(data => {
-      if (data['action'] == 'reset_call_duration') {
-        this.resetCallDuration();
+    this.subscriptions.add(
+      this.authentication.currentUser.subscribe(data => {
+        this.user = data;
+      })
+    );
 
-      }
-    });
+    this.subscriptions.add(
+      this.callService.resetCallDuration$.subscribe(data => {
+        if (data['action'] == 'reset_call_duration') {
+          this.resetCallDuration();
+        }
+      })
+    );
     const defaultLang = 'fr';
 
-
-
-    this.systemService.configs().subscribe(resp => {
-      if (resp) {
-        this.translate.setDefaultLang(resp.defaultLanguage);
-        this.translate.use(resp.userLang);
-        this.getTranslation(resp.userLang).subscribe(() => {
-          this.handelMessageRouter();
-        });
-      } else {
-        this.translate.setDefaultLang('fr');
-        this.translate.use('Fr');
-      }
-    });
+    this.subscriptions.add(
+      this.systemService.configs().subscribe(resp => {
+        if (resp) {
+          this.translate.setDefaultLang(resp.defaultLanguage);
+          this.translate.use(resp.userLang);
+          this.getTranslation(resp.userLang).subscribe(() => {
+            this.handelMessageRouter();
+          });
+        } else {
+          this.translate.setDefaultLang('fr');
+          this.translate.use('Fr');
+        }
+      })
+    );
     //    setTimeout(()=>{
     //      this.translate.setDefaultLang('ca');
     //
@@ -192,54 +198,67 @@ export class AppComponent {
     //    });
 
 
-    this.route.queryParams.subscribe(params => {
-      if (params['reload']) {
-        this.authentication.reload();
-      }
-    });
+    this.subscriptions.add(
+      this.route.queryParams.subscribe(params => {
+        if (params['reload']) {
+          this.authentication.reload();
+        }
+      })
+    );
 
-    this.callService._EndCall$.subscribe(data => {
-      this.hiddenAnswer = false;
-      //  this.openRatingDialog();
-    })
-    this.callService._StartCall$.subscribe(data => {
-      if (data) {
-        this.startCallDuration();
-      }
-    })
+    this.subscriptions.add(
+      this.callService._EndCall$.subscribe(data => {
+        this.hiddenAnswer = false;
+        this.resetCallDuration();
+      })
+    );
+    
+    this.subscriptions.add(
+      this.callService._AcceptCall$.subscribe(data => {
+        if (data) {
+          this.startCallDuration();
+        }
+      })
+    );
+
     this.hiddenAnswer = false;
-    this.pageConfigService.currentConfig.subscribe(data => {
-      if (data) {
-        this.pageConfig = data;
-        if (this.pageConfig && this.pageConfig.faviconLink) {
-          this.favIcon.href = this.pageConfig.faviconLink;
+
+    this.subscriptions.add(
+      this.pageConfigService.currentConfig.subscribe(data => {
+        if (data) {
+          this.pageConfig = data;
+          if (this.pageConfig && this.pageConfig.faviconLink) {
+            this.favIcon.href = this.pageConfig.faviconLink;
+          }
+          if (this.pageConfig && this.pageConfig.googleCode) {
+            ga('create', this.pageConfig.googleCode, 'auto');
+            ga('send', 'pageview');
+          }
         }
-        if (this.pageConfig && this.pageConfig.googleCode) {
-          ga('create', this.pageConfig.googleCode, 'auto');
-          ga('send', 'pageview');
-        }
-      }
-    })
+      })
+    );
 
     this.ads = this.pageConfigService.currentAdsValue;
   }
+  
   listenToLoading() {
-    this._loading.loadingSub.pipe(delay(0)).subscribe(loading => {
-      this.loading = loading;
-    });
+    this.subscriptions.add(
+      this._loading.loadingSub.pipe(delay(0)).subscribe(loading => {
+        this.loading = loading;
+      })
+    );
   }
+
   //tra loi cuoc goi
   acceptCall() {
     this.hiddenAnswer = true;
     this.callService.acceptCall();
-    this.startCallDuration();
   }
 
   //gac may
   hangup() {
     this.callService.endCall();
     this.hiddenAnswer = false;
-    //this.resetCallDuration();
 
   }
 
@@ -338,6 +357,10 @@ export class AppComponent {
   }
   public setKeyWord(keyword: string) {
     this.meta.updateTag({ name: 'keyword', content: keyword })
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }
 

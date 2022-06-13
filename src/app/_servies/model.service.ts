@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { User, Model, EventSocket } from '@/_models';
 import { IModel } from '@/_models/Interface/IModel'
 import { Observable, BehaviorSubject } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { first, share } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { AlertService } from './alert.service';
 import { AuthenticationService } from './authentication.service';
@@ -49,7 +49,7 @@ export class ModelService {
 
   getAllModel(sort: string = 'id', order: string = 'desc', page: number = 0, limit: number = 20) {
     const queryUrl = `?&sort=${sort}&order=${order}&page=${page + 1}&limit=${limit}`;
-    return this.http.get<IModel>(`${environment.apiUrl}/api/v1/model/all${queryUrl}`);
+    return this.http.get<IModel>(`${environment.apiUrl}/api/v1/model/all${queryUrl}`).pipe(share());
   }
 
   getAllModelasAdmin(sort: string = 'id', order: string = 'desc', page: number = 0, limit: number = 20) {
@@ -62,7 +62,9 @@ export class ModelService {
       params: {
         loading: 'true'
       }
-    }).pipe(first())
+    }).pipe(
+      share(),
+      first())
       .subscribe(data => this.models.next(data['data']), err => this.alertService.error(err.msg));
   }
 
@@ -84,11 +86,11 @@ export class ModelService {
     return this.http.get<Object>(`${environment.apiUrl}/api/v1/model/${id}`);
   }
   getListModel(size: Number) {
-    return this.http.get<Model[]>(`${environment.apiUrl}/api/v1/model/?limit=${size}`);
+    return this.http.get<Model[]>(`${environment.apiUrl}/api/v1/model/?limit=${size}`).pipe(share());
   }
 
   getTwilioToken() {
-    return this.http.post<JSON>(`${environment.apiUrl}/api/v1/call/token/generate`, null);
+    return this.http.post<JSON>(`${environment.apiUrl}/api/v1/call/token/generate`, null).pipe(share());
   }
 
   updateAudio(file: File) {

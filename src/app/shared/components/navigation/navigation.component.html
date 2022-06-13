@@ -8,12 +8,11 @@
     position: absolute;
     top: 21px;
     right: 61px;">
-    <li class="pull-left">
+    <li class="pull-left d-xs-none ">
       <div class="d-inline-block dropdown" ngbDropdown>
         <button style="line-height: 10px;    text-transform: capitalize;" aria-haspopup="true" class="btn btn-outline-secondary flag-dropdown-mobile  flag-dropdown " id="dropdownLangdropdown-toggle flag-dropdown dropdown-uage"
           ngbDropdownToggle type="button">
           <img style="width:20px" src="assets/images/flag/{{selectedLanguage.key}}.svg">{{selectedLanguage.name}}
-
         </button>
         <div ngbDropdownMenu aria-labelledby="dropdownLanguage">
           <button (click)="selectLanguage(lang)" ngbDropdownItem *ngFor="let lang of languages"><img style="width:25px" src="assets/images/flag/{{lang.key}}.svg">{{lang.name}}</button>
@@ -113,6 +112,19 @@
         <a [routerLink]='["/recharger-mon-compte"]'>{{'Get Minutes'|translate}}</a>
       </li>
       <li><a [routerLink]='["/page/how-to-call"]'>{{'How To Call'|translate}}</a></li>
+      <li>
+        <a class="d-inline-block dropdown" ngbDropdown>
+          <button style="line-height: 10px;    text-transform: capitalize;" aria-haspopup="true"
+            class="btn btn-outline-secondary flag-dropdown-mobile  flag-dropdown "
+            id="dropdownLangdropdown-toggle flag-dropdown dropdown-uage" ngbDropdownToggle type="button">
+            <img style="width:20px" src="assets/images/flag/{{selectedLanguage.key}}.svg">{{selectedLanguage.name}}
+          </button>
+          <div ngbDropdownMenu aria-labelledby="dropdownLanguage">
+            <button (click)="selectLanguage(lang)" ngbDropdownItem *ngFor="let lang of languages"><img
+                style="width:25px" src="assets/images/flag/{{lang.key}}.svg">{{lang.name}}</button>
+          </div>
+        </a>
+      </li>
       <!-- <li *ngIf="user && user.role == 'member' "><a class="btn btn-outline-user">{{timer}} {{'Minutes'|translate}}</a></li> -->
     </ul>
   </div>

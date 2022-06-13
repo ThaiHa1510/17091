@@ -1,17 +1,19 @@
-import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Ads } from '@/_models'
 import { environment } from 'environments/environment';
 import { PageconfigService } from '@/_servies';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-become-model',
   templateUrl: './become-model.component.html',
   styleUrls: ['./become-model.component.css']
 })
-export class BecomeModelComponent implements OnInit, AfterViewInit {
+export class BecomeModelComponent implements OnInit, AfterViewInit, OnDestroy {
   baseUrl = environment.apiUrl + '/';
   ads: Ads;
   image: String;
+  subscriptions :Subscription = new Subscription();
   loadingAds: Boolean = false;
   public listBanner;
   @ViewChild('bgEle', { static: false }) bgEle: ElementRef;
@@ -30,7 +32,7 @@ export class BecomeModelComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     if (this.bgEle) {
-      this.pageConfigService.currentAds.subscribe(data => {
+      this.subscriptions.add(this.pageConfigService.currentAds.subscribe(data => {
         if (data != null && data.footer) {
           let extraQuery = '&width=' + this.bgEle.nativeElement.offsetWidth + '&height=' + this.bgEle.nativeElement.offsetHeight + '&format=png';
           this.listBanner = data.footer[0] ? data.footer[0] : [];
@@ -40,7 +42,7 @@ export class BecomeModelComponent implements OnInit, AfterViewInit {
           }
         }
 
-      });
+      }));
     }
   }
 
@@ -64,6 +66,9 @@ export class BecomeModelComponent implements OnInit, AfterViewInit {
     this.router.navigate([path]);
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
 
 
 }

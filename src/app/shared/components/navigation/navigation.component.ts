@@ -43,8 +43,7 @@ export class NavigationComponent implements OnInit {
     private searchService: SearchService,
     private pageConfigService: PageconfigService,
     private location: Location,
-    private router: Router,
-    private detectorRef: ChangeDetectorRef) {
+    private router: Router) {
     this.searchTerm$.subscribe(inputData => {
     });
     this.searchService.search(this.searchTerm$).subscribe(results => {
@@ -117,11 +116,9 @@ export class NavigationComponent implements OnInit {
     }
     this.events.subscribe('chat:updated', _badgeValue => {
       this.totalUnreadMessage = _badgeValue;
-      this.detectorRef.detectChanges();
     });
     this.events.subscribe('chat:new-message-comming', _badgeValue => {
       this.totalUnreadMessage = this.totalUnreadMessage + 1;
-      this.detectorRef.detectChanges();
     });
   }
 

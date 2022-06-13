@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { User, Model, CallHistory, EventSocket } from '@/_models';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { map, first, finalize } from 'rxjs/operators';
+import { map, first, finalize, takeWhile } from 'rxjs/operators';
 import { AcceptCallService, } from '@/_servies/acceptCall.service';
 import { SocketService } from './socket.service';
 import { AlertService } from './alert.service';
@@ -15,6 +15,7 @@ import { LocalstorageService } from './localstorage.service';
 import { MatDialog } from '@angular/material/dialog';
 import { RatingCallComponent } from '@/shared/widgets/rating-call/rating-call.component';
 import { Device } from '@twilio/voice-sdk';
+import { MESSAGE } from '@/app.config';
 @Injectable({
   providedIn: 'root'
 })
@@ -28,7 +29,7 @@ export class CallService {
   public availMin: number;
   public dialogRef: any;
   private _EndCall = new Subject();
-  _EndCall$ = this._EndCall.asObservable();
+  _EndCall$ = this._EndCall.asObservable().pipe(takeWhile(vale=>this.isCalling));
   private _AcceptCall = new Subject();
   _AcceptCall$ = this._AcceptCall.asObservable();
   private remainingTime: BehaviorSubject<number>;
@@ -38,6 +39,7 @@ export class CallService {
   private user: User;
   public type: string;
   public callId;
+  public isCalling:boolean =false;
   private params: any;
   private device:any;
   private _StartCall = new Subject();
@@ -95,33 +97,38 @@ export class CallService {
       maxCallSignalingTimeoutMs: 30000,
       codecPreferences: ['opus', 'pcmu'] 
     }
+
     this.device = new Device(this.twilioTokenSubject.value);
+
     this.device.updateOptions(deviceOptions);
+
     this.device.on('offline', (device) => {
       if (this.user != null) {
         this.reloadTwilio();
       }
     })
+
     this.device.on('error', (twilioError, call) => {
-      //console.log('An error has occurred: ', twilioError);
+      console.log('An error has occurred: ', twilioError);
     });
+
     this.device.on('registered', this.handleSuccessfulRegistration);
 
     this.device.register();
 
     this.device.on('disconnect', (conn) => {
-      console.log('device disconnect');
       conn.reject(() => { });
       if (this.callId != conn.parameters.CallSid) {
-        this._EndCall.next({
-          lastCallId: this.callId,
-          currentCallId: conn.parameters.CallSid,
-        });
+        // this._EndCall.next({
+        //   lastCallId: this.callId,
+        //   currentCallId: conn.parameters.CallSid,
+        // });
       }
       this.callId = conn.parameters.CallSid;
       this.otherPerson.next(null);
       this.modalService.closeAll();
-      this.resetCallDuration.next({ action: 'reset_call_duration' });
+     // this.resetCallDuration.next({ action: 'reset_call_duration' });
+      this._EndCall.next(null);
       if (this.user.role === 'member') {
         this.socketServivce.emitEvent(EventSocket.CALLEND, {
           From: this.user.id,
@@ -149,14 +156,13 @@ export class CallService {
       this.availMin = conn.message.availMin;
       this.otherPerson.next(conn.parameters);
       this._EndCall$.subscribe(data => {
+        this.isCalling = false;
         conn.reject();
-        //conn.disconnect();
         conn.disconnect();
       });
     });
 
     this.device.on('cancel', (connection) => {
-      console.log('run device cancael');
       this.otherPerson.next(null);
       this.modalService.closeAll();
       this.device.activeConnection();
@@ -240,10 +246,14 @@ export class CallService {
   }
 
   public acceptCall() {
-    this._AcceptCall.next();
+    this._AcceptCall.next(true);
   }
 
   public call(to: Model) {
+    if (this.device.state != "registered") {
+        this.alertService.error(MESSAGE.CALL.NOT_REGIESTERED)
+        return;
+    }
     if (this.user != null && to != null) {
       if (to.id != this.user.id) {
         this.otherPerson.next(to);
@@ -254,7 +264,7 @@ export class CallService {
         this.makeCall(params);
       }
       else {
-        this.alertService.error("You cannot make outgoing calls  to yourself.");
+        this.alertService.error("You cannot make outgoing calls to yourself.");
       }
     }
     else {
@@ -268,9 +278,12 @@ export class CallService {
     this.params = params;
     const call= await this.device.connect({params});
     if(call){
+      this.isCalling=true;
       this.setUpTwilioConnect(call);
       this.socketServivce.emitEvent(EventSocket.CALLSTART, params);
+      this._AcceptCall.next(true);
     }
+    
   }
 
   public endCall() {
@@ -288,8 +301,6 @@ export class CallService {
     })
 
     conn.on('disconnect', () => {
-      console.log('disconnect event');
-      console.log(conn.customParameters.get('To'));
       this.socketServivce.emitEvent(EventSocket.CALLEND, {
         From: this.user.id,
         To: conn.customParameters.get("To"),
@@ -298,13 +309,12 @@ export class CallService {
     })
 
     conn.on('error', (error) => {
-      console.log('error event');
       this._EndCall.next(null);
       this.alertService.error(error.message, false, true);
     })
 
     conn.on('accept', (connection) => {
-      console.log('disconnect event');
+      this.isCalling=true;
       this._StartCall.next(true);
     })
 

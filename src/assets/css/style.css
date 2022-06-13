@@ -1678,3 +1678,9 @@ mat-header-cell {
 .notification-message-mobile {
   display: none;
 }
+
+@media (max-width: 576px) {
+  .d-xs-none {
+    display: none !important;
+  }
+}

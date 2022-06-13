@@ -50,7 +50,7 @@ export class StaticPageComponent implements OnInit {
   }
   article: IArticle;
   ngOnInit() {
-    
+   
   }
 
   public ngOnSubmit()
